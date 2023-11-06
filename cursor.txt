@@ -1,0 +1,35 @@
+create procedure rolllist()
+begin
+declare a int;
+declare a1 varchar(10);
+declare b int;
+
+declare b1 varchar(10);
+declare done int default false;
+declare c1 cursor for select roll,name from oldroll;
+declare c2 cursor for select roll,name from newroll;
+declare continue handler for not found set done=true;
+open c1;
+open c2;
+loop1:loop
+fetch c1 into a,a1;
+if done then
+leave loop1;
+end if;
+loop2:loop
+fetch c2 into b,b1;
+if done then
+insert into newroll values(a,a1);
+leave loop2;
+end if;
+if a=b then
+leave loop2;
+end if;
+end loop;
+end loop;
+close c1;
+close c2;
+end $$
+
+call rolllist() $$
+select * from newroll $$
